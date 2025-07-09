@@ -404,7 +404,7 @@ elif page == "Data Pegawai":
                             ttl_obj = datetime.strptime(ttl_str, "%d/%m/%Y")
                         except:
                             ttl_obj = datetime.today()
-                        ttl = st.date_input("Tanggal Lahir", ttl_obj)
+                        ttl = st.date_input("Tanggal Lahir", ttl_obj, min_value=datetime(1900, 1, 1))
                         kod = st.text_input("Kode OPD", r["KODE OPD"])
                         paw = st.text_input("Pendidikan Awal", r["PENDIDIKAN AWAL"])
                         pak = st.text_input("Pendidikan Akhir", r["PENDIDIKAN AKHIR"])
@@ -668,4 +668,3 @@ elif page == "Hasil Visualisasi Magang":
     # # Tombol unduh (opsional)
     # csv_talent = df_talent_muda.to_csv(index=False).encode('utf-8')
     # st.download_button("📥 Unduh Talent Pool", data=csv_talent, file_name="talent_pool_asn.csv", mime="text/csv")
-        

@@ -159,38 +159,43 @@ if "logged" not in st.session_state:
 if not st.session_state.logged:
     login()
     st.stop()
-# ────────────────────────────────────────────────
+
 # # ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
-#     FUNGSI CRUD UNTUK GOOGLE SHEETS + FIX KUOTA [429] 
+#     FUNGSI CRUD UNTUK GOOGLE SHEETS  
 # ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
 def get_df():
     data = worksheet.get_all_values()
     df = pd.DataFrame(data[1:], columns=data[0])
     if not df.empty:
+        df = df.drop(columns=["No"], errors="ignore")  # 👉 Tambahkan baris ini
         df["USIA"] = pd.to_numeric(df["USIA"], errors="coerce").fillna(0).astype(int)
-        df = df.drop(columns=["No"], errors="ignore")  # ← Tambahin ini
     return df
 
 def add_row(rec):
-    values = [list(rec.values())]
-    worksheet.append_rows(values)
+    # Urutan sesuai header kecuali "No"
+    kolom_urutan = ["ID PEGAWAI", "NAMA", "GDP", "GELAR BELAKANG", "JABATAN", "JK",
+                    "TEMPAT LAHIR", "TL", "KODE OPD", "PENDIDIKAN AWAL",
+                    "PENDIDIKAN AKHIR", "USIA", "OPD", "KOMPETENSI"]
+    values = [[rec.get(k, "") for k in kolom_urutan]]
+    worksheet.append_rows(values, value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     return True
 
 def update_row(id_pegawai, row):
     sheet_data = worksheet.get_all_values()
-    for idx, r in enumerate(sheet_data[1:], start=2):
-        if r[1] == id_pegawai:
-            worksheet.update(f"A{idx}:O{idx}", [row])
+    for idx, r in enumerate(sheet_data[1:], start=2):  # data[0] = header, start dari row 2
+        if r[0] == id_pegawai:  # Pastikan ID PEGAWAI ada di kolom A (indeks 0)
+            worksheet.update(f"A{idx}:N{idx}", [row])  # update 14 kolom (A-N), kolom "No" tetap diabaikan
             return True
     return False
 
 def delete_row(id_pegawai):
     sheet_data = worksheet.get_all_values()
-    for idx, row in enumerate(sheet_data[1:], start=2):
-        if row[1] == id_pegawai:
+    for idx, r in enumerate(sheet_data[1:], start=2):
+        if r[0] == id_pegawai:
             worksheet.delete_rows(idx)
             return True
     return False
+
 #────────────────────────────────────────────────
 #                  SIDEBAR MENU
 # ────────────────────────────────────────────────
@@ -663,4 +668,4 @@ elif page == "Hasil Visualisasi Magang":
     # # Tombol unduh (opsional)
     # csv_talent = df_talent_muda.to_csv(index=False).encode('utf-8')
     # st.download_button("📥 Unduh Talent Pool", data=csv_talent, file_name="talent_pool_asn.csv", mime="text/csv")
-            
+        

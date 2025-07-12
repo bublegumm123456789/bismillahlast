@@ -72,14 +72,14 @@ def mapping_jabatan(j):
 
 def transform_jabatan(j):
     j = j.upper()
-    if any(x in j for x in ["AHLI UTAMA","UTAMA"]): return 4
-    if "AHLI MADYA"   in j: return 3
+    if any(x in j for x in ["AHLI UTAMA","UTAMA","DOKTER SPESIALIS ANAK","DOKTER SPESIALIS OBSTETRI"]): return 4
+    if any(x in j for x in ["AHLI MADYA","MADYA"]): return 3
     if any(x in j for x in ["AHLI MUDA","MUDA"]): return 2
-    if any(x in j for x in ["AHLI PERTAMA","PERTAMA"]): return 1
+    if any(x in j for x in ["AHLI PERTAMA","PERTAMA","KEPALA PUSKESMAS"]): return 1
     if "PENYELIA"     in j: return 0.9
     if any(x in j for x in ["MAHIR","LANJUTAN/MAHIR"]): return 0.7
-    if any(x in j for x in ["TERAMPIL","PELAKSANA/TERAMPIL", "TERAMPIL/PELAKSANA","LANJUTAN","PELAKSANA LANJUTAN"]): return 0.5
-    if "PEMULA" in j: return 0.3
+    if any(x in j for x in ["TERAMPIL","PELAKSANA/TERAMPIL", "TERAMPIL/PELAKSANA","LANJUTAN","PELAKSANA LANJUTAN","PELAKSANA","BIDAN PELAKSANA","PEREKAM MEDIS"]): return 0.5
+    if any(x in j for x in ["PEMULA","PENGEMUDI AMBULANCE","VERIFIKATOR PAJAK","PENGELOLA KEUANGAN"]): return 0.3
     return 0.2
 
 @st.cache_data(show_spinner=False)
